@@ -1,0 +1,277 @@
+<section id="disease-prevalence-analytics">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"> Disease Prevalence Analytics </h3>
+            <hr>
+            <div class="filter-chart row m-0">
+              <div class="col-md-8">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">From</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="individualFilter.start_year" (change)="fetchIndividualData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="individualFilter.start_quarater" [disabled]="!individualFilter.start_year"
+                    (change)="fetchIndividualData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">To</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="individualFilter.end_year" [disabled]="!individualFilter.start_year"
+                    (change)="fetchIndividualData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of getYears(individualFilter.start_year)" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="individualFilter.end_quarater" [disabled]="!individualFilter.start_year || !individualFilter.end_year"
+                    (change)="fetchIndividualData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Clinic Type</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="individualFilter.clinic_type_id" (change)="fetchIndividualData()">
+                    <option value="">----Select----</option>
+                    <option *ngFor="let clinicType of clinicTypes" [ngValue]="clinicType.id">{{clinicType.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-block">
+              <div class="row">
+                <div class="col-md-8 col-sm-12">
+                  <div id="vartical-bar-chart" class="height-400" *ngIf="individual.liveChart.length > 0">
+                    <ngx-charts-bar-vertical [scheme]="barChartSettings.barChartColorScheme" [results]="individual.liveChart" [gradient]="barChartSettings.barChartGradient"
+                      [xAxis]="barChartSettings.barChartShowXAxis" [yAxis]="barChartSettings.barChartShowYAxis" [legend]="barChartSettings.barChartShowLegend"
+                      [showXAxisLabel]="barChartSettings.barChartShowXAxisLabel" [showYAxisLabel]="barChartSettings.barChartShowYAxisLabel"
+                      [xAxisLabel]="'Disease'" [yAxisLabel]="barChartSettings.barChartYAxisLabel" (select)="onSelect($event)">
+                    </ngx-charts-bar-vertical>
+                  </div>
+                  <div class="row mt-3" *ngIf="individual.initialChart.length>0">
+                    <div class="col-md-3 col-sm-12 mt-2" style="display:inline-flex">
+                      <label class="mr-2">Live Chart: </label>
+                      <div class="mr-2">
+                        <input type="radio" [(ngModel)]="individualDrawChartStop" [value]="false" name="individualLiveChart">
+                        <label>Yes</label>
+                      </div>
+                      <div class="">
+                        <input type="radio" [(ngModel)]="individualDrawChartStop" [value]="true" name="individualLiveChart">
+                        <label>No</label>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-9 col-sm-12">
+                      <nouislider #individualNS [(ngModel)]="individualDrawChartStart" (change)="drawIndividualLiveChart(true)" [config]="individualConfig"></nouislider>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                  <ng2-smart-table [settings]="individualSettings" [source]="individualSource"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Disease Prevalence (%) by respective Disease Category in Total Database</h3>
+            <hr>
+            <div class="filter-chart row m-0">
+              <div class="col-md-8">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">From</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="categoryFilter.start_year" (change)="fetchCategoryData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="categoryFilter.start_quarater" [disabled]="!categoryFilter.start_year"
+                    (change)="fetchCategoryData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">To</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="categoryFilter.end_year" [disabled]="!categoryFilter.start_year"
+                    (change)="fetchCategoryData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of getYears(categoryFilter.start_year)" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="categoryFilter.end_quarater" [disabled]="!categoryFilter.start_year || !categoryFilter.end_year"
+                    (change)="fetchCategoryData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Clinic Type</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="categoryFilter.clinic_type_id" (change)="fetchCategoryData()">
+                    <option value="">----Select----</option>
+                    <option *ngFor="let clinicType of clinicTypes" [ngValue]="clinicType.id">{{clinicType.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-block">
+              <div class="row">
+                <div class="col-md-8 col-sm-12">
+                  <div id="vartical-bar-chart" class="height-400" *ngIf="category.liveChart.length > 0">
+                    <ngx-charts-bar-vertical [scheme]="barChartSettings.barChartColorScheme" [results]="category.liveChart" [gradient]="barChartSettings.barChartGradient"
+                      [xAxis]="barChartSettings.barChartShowXAxis" [yAxis]="barChartSettings.barChartShowYAxis" [legend]="barChartSettings.barChartShowLegend"
+                      [showXAxisLabel]="barChartSettings.barChartShowXAxisLabel" [showYAxisLabel]="barChartSettings.barChartShowYAxisLabel"
+                      [xAxisLabel]="'Therapy Area'" [yAxisLabel]="barChartSettings.barChartYAxisLabel" (select)="onSelectCategory($event)">
+                    </ngx-charts-bar-vertical>
+                  </div>
+                  <div class="row mt-3" *ngIf="category.initialChart.length>0">
+                    <div class="col-md-3 col-sm-12 mt-2" style="display:inline-flex">
+                      <label class="mr-2">Live Chart: </label>
+                      <div class="mr-2">
+                        <input type="radio" [(ngModel)]="categoryDrawChartStop" [value]="false" name="categoryLiveChart">
+                        <label>Yes</label>
+                      </div>
+                      <div class="">
+                        <input type="radio" [(ngModel)]="categoryDrawChartStop" [value]="true" name="categoryLiveChart">
+                        <label>No</label>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-9 col-sm-12">
+                      <nouislider #categoryNS [(ngModel)]="categoryDrawChartStart" (change)="drawCategoryLiveChart(true)" [config]="categoryConfig"></nouislider>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                  <ng2-smart-table [settings]="categorySettings" [source]="categorySource" (rowSelect)="onSelectCategory($event)"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12" *ngIf="therapyArea.id">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Disease Prevalence (%) by Individual Disease in {{therapyArea.name}}</h3>
+            <hr>
+            <div class="filter-chart row m-0">
+              <div class="col-md-8">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">From</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="diseaseByCategoryFilter.start_year" (change)="fetchIndividualByCategoryData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="diseaseByCategoryFilter.start_quarater" [disabled]="!diseaseByCategoryFilter.start_year"
+                    (change)="fetchIndividualByCategoryData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">To</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="diseaseByCategoryFilter.end_year" [disabled]="!diseaseByCategoryFilter.start_year"
+                    (change)="fetchIndividualByCategoryData()">
+                    <option value="">Year</option>
+                    <option *ngFor="let year of getYears(diseaseByCategoryFilter.start_year)" [ngValue]="year">{{year}}</option>
+                  </select>
+                  <!-- <select class="custom-select form-control" [(ngModel)]="diseaseByCategoryFilter.end_quarater" [disabled]="!diseaseByCategoryFilter.start_year || !diseaseByCategoryFilter.end_year"
+                    (change)="fetchIndividualByCategoryData()">
+                    <option value="">Quarater</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Clinic Type</span>
+                  </div>
+                  <select class="custom-select form-control" [(ngModel)]="diseaseByCategoryFilter.clinic_type_id" (change)="fetchIndividualByCategoryData()">
+                    <option value="">----Select----</option>
+                    <option *ngFor="let clinicType of clinicTypes" [ngValue]="clinicType.id">{{clinicType.name}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="card-block">
+              <div class="row">
+                <div class="col-md-8 col-sm-12">
+                  <div id="pie-chart" class="height-400">
+                    <ngx-charts-pie-chart [scheme]="pieChartSettings.pieChartColorScheme" [results]="diseaseByCategory.liveChart" [legend]="pieChartSettings.pieChartShowLegend"
+                      [explodeSlices]="pieChartSettings.pieChartExplodeSlices" [labels]="pieChartSettings.pieChartShowLabels"
+                      [doughnut]="pieChartSettings.pieChartDoughnut" [gradient]="pieChartSettings.pieChartGradient">
+                    </ngx-charts-pie-chart>
+                  </div>
+                  <div class="row mt-3" *ngIf="diseaseByCategory.initialChart.length>0">
+                    <div class="col-md-3 col-sm-12 mt-2" style="display:inline-flex">
+                      <label class="mr-2">Live Chart: </label>
+                      <div class="mr-2">
+                        <input type="radio" [(ngModel)]="diseaseByCategoryDrawChartStop" [value]="false" name="diseaseByCategoryLiveChart">
+                        <label>Yes</label>
+                      </div>
+                      <div class="">
+                        <input type="radio" [(ngModel)]="diseaseByCategoryDrawChartStop" [value]="true" name="diseaseByCategoryLiveChart">
+                        <label>No</label>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-9 col-sm-12">
+                      <nouislider #diseaesByCategoryNS [(ngModel)]="diseaseByCategoryDrawChartStart" (change)="drawdiseaseByCategoryLiveChart(true)" [(config)]="diseaseByCategoryConfig"></nouislider>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                  <ng2-smart-table [settings]="individualSettings" [source]="diseaseByCategorySource"></ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

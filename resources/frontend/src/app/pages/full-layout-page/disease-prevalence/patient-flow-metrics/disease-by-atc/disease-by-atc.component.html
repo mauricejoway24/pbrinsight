@@ -1,0 +1,36 @@
+<div id="disease-by-atc">
+  <ngb-tabset (tabChange)="beforeChange($event)">
+    <ngb-tab *ngFor="let atcLevel of atcLevels" [title]="'ATC-' + atcLevel" [id]="'ATC-' + atcLevel">
+    </ngb-tab>
+  </ngb-tabset>
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <div id="vartical-bar-chart" class="height-400" *ngIf="atc.liveChart.length > 0">
+        <ngx-charts-bar-vertical [scheme]="barChartSettings.barChartColorScheme" [results]="atc.liveChart" [gradient]="barChartSettings.barChartGradient"
+          [xAxis]="barChartSettings.barChartShowXAxis" [yAxis]="barChartSettings.barChartShowYAxis" [legend]="barChartSettings.barChartShowLegend"
+          [showXAxisLabel]="barChartSettings.barChartShowXAxisLabel" [showYAxisLabel]="barChartSettings.barChartShowYAxisLabel"
+          [xAxisLabel]="'Atc Level ' + filter.atc_level" [yAxisLabel]="barChartSettings.barChartYAxisLabel">
+        </ngx-charts-bar-vertical>
+      </div>
+      <div class="row mt-3" *ngIf="atc.initialChart.length>0">
+        <div class="col-md-4 col-sm-12 mt-2" style="display:inline-flex">
+          <label class="mr-2">Live Chart: </label>
+          <div class="mr-2">
+            <input type="radio" [(ngModel)]="atc.liveChartActivate" [value]="false" name="atcLiveChart">
+            <label>Yes</label>
+          </div>
+          <div class="">
+            <input type="radio" [(ngModel)]="atc.liveChartActivate" [value]="true" name="atcLiveChart">
+            <label>No</label>
+          </div>
+        </div>
+        <div class="form-group col-md-8 col-sm-12">
+          <nouislider #atcNS [(ngModel)]="this.atc.drawChartStartPos" (change)="drawLiveChart(true)" [config]="atcConfig"></nouislider>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12">
+      <ng2-smart-table [settings]="dataTableSettings" [source]="dataTableSource"></ng2-smart-table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,93 @@
+<div class="card" id="classification-share">
+  <div class="card-header">
+    <h3 class="card-title"> % Share by Clinical Laboratory Specialty </h3>
+    <hr>
+    <div class="filter-chart row m-0">
+      <div class="col-md-12">
+        <div class="input-group input-group-sm">
+          <div class="input-group-prepend">
+            <span class="input-group-text">From</span>
+          </div>
+          <select class="custom-select form-control" [(ngModel)]="filter.start_year" (change)="fetchData()">
+            <option value="">Year</option>
+            <option *ngFor="let year of years" [ngValue]="year">{{year}}</option>
+          </select>
+          <!-- <select class="custom-select form-control" [(ngModel)]="filter.start_quarater" [disabled]="!filter.start_year" (change)="fetchData()">
+            <option value="">Quarater</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select> -->
+          <div class="input-group-prepend">
+            <span class="input-group-text">To</span>
+          </div>
+          <select class="custom-select form-control" [(ngModel)]="filter.end_year" [disabled]="!filter.start_year" (change)="fetchData()">
+            <option value="">Year</option>
+            <option *ngFor="let year of getYears(filter.start_year)" [ngValue]="year">{{year}}</option>
+          </select>
+          <!-- <select class="custom-select form-control" [(ngModel)]="filter.end_quarater" [disabled]="!filter.start_year || !filter.end_year"
+            (change)="fetchData()">
+            <option value="">Quarater</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-block">
+      <div class="row">
+        <div class="col-md-6 col-sm-12">
+          <div id="vartical-bar-chart" class="height-400" *ngIf="classification.liveChart.length > 0">
+            <ngx-charts-bar-vertical [scheme]="barChartSettings.barChartColorScheme" [results]="classification.liveChart" [gradient]="barChartSettings.barChartGradient"
+              [xAxis]="barChartSettings.barChartShowXAxis" [yAxis]="barChartSettings.barChartShowYAxis" [legend]="barChartSettings.barChartShowLegend"
+              [showXAxisLabel]="barChartSettings.barChartShowXAxisLabel" [showYAxisLabel]="barChartSettings.barChartShowYAxisLabel"
+              [xAxisLabel]="'classification (Laboratory Medicine)'" [yAxisLabel]="barChartSettings.barChartYAxisLabel" (select)="onSelectChart($event)">
+            </ngx-charts-bar-vertical>
+          </div>
+          <div class="row mt-4" *ngIf="classification.initialChart.length>0">
+            <div class="col-md-4 col-sm-12 mt-2" style="display:inline-flex">
+              <label class="mr-2">Live Chart: </label>
+              <div class="mr-2">
+                <input type="radio" [(ngModel)]="classification.liveChartActivate" [value]="false" name="classificationLiveChart">
+                <label>Yes</label>
+              </div>
+              <div class="">
+                <input type="radio" [(ngModel)]="classification.liveChartActivate" [value]="true" name="classificationLiveChart">
+                <label>No</label>
+              </div>
+            </div>
+            <div class="form-group col-md-8 col-sm-12">
+              <nouislider #classificationNS [(ngModel)]="classification.drawChartStartPos" (change)="drawLiveChart(true)" [config]="classificationConfig"></nouislider>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+          <ng2-smart-table [settings]="dataTableSettings" [source]="dataTableSource" (rowSelect)="onSelectTable($event)"></ng2-smart-table>
+        </div>
+        <div class="col-md-12">
+          <hr>
+        </div>
+        <div class="col-sm-12 col-md-6" style="background: rgba(237, 237, 237, 0.5);">
+          <sub-ana1-share></sub-ana1-share>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <sub-ana2-share></sub-ana2-share>
+        </div>
+        <div class="col-md-12">
+          <hr>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <clinic-share></clinic-share>
+        </div>
+        <div class="col-sm-12 col-md-6" style="background: rgba(237, 237, 237, 0.5);">
+          <facility-share></facility-share>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+#disease-prevalence-analytics {
+    .ng2-smart-pagination {
+        &.pagination {
+            .page-link {
+                line-height: 1rem;
+            }
+        }
+    }
+
+    .ng-star-inserted {
+        text-align: center !important;
+    }
+
+    .input-group {
+        margin-top: 16px;
+    }
+}
